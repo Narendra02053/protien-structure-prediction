@@ -1,123 +1,142 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Camera, RefreshCw, Expand } from 'lucide-react';
+import { Camera, RefreshCw, Expand, Pause, Play, Layers } from 'lucide-react';
 
 const STYLES = ['cartoon', 'stick', 'sphere', 'surface'];
 const COLORS = ['spectrum', 'chain', 'white'];
 
 const StructureViewer = ({ pdbString, mutationPos }) => {
-    const viewerRef = useRef(null);
-    const [viewer, setViewer] = useState(null);
-    const [style, setStyle] = useState('cartoon');
-    const [color, setColor] = useState('spectrum');
-    const [isFullscreen, setIsFullscreen] = useState(false);
+  const viewerRef = useRef(null);
+  const [viewer, setViewer] = useState(null);
+  const [style, setStyle] = useState('cartoon');
+  const [color, setColor] = useState('spectrum');
+  const [spinning, setSpinning] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-    useEffect(() => {
-        if (!pdbString || !viewerRef.current) return;
-        const config = { backgroundColor: 'rgba(0,0,0,0)' };
-        const v = window.$3Dmol.createViewer(viewerRef.current, config);
-        v.addModel(pdbString, "pdb");
-        v.setStyle({}, { cartoon: { color: 'spectrum' } });
-        if (mutationPos) {
-            v.addStyle({ resi: mutationPos }, { stick: { color: 'red', radius: 0.5 } });
-            v.addLabel(`Mut ${mutationPos}`, { backgroundColor: 'rgba(239,68,68,0.7)', fontSize: 10, position: { resi: mutationPos } });
-        }
-        v.zoomTo();
-        v.render();
-        v.spin('y', 0.5);
-        setViewer(v);
-        return () => { if (v) v.clear(); };
-    }, [pdbString, mutationPos]);
+  useEffect(() => {
+    if (!pdbString || !viewerRef.current) return;
+    const v = window.$3Dmol.createViewer(viewerRef.current, { backgroundColor: 'rgba(0,0,0,0)' });
+    v.addModel(pdbString, 'pdb');
+    v.setStyle({}, { cartoon: { color: 'spectrum' } });
+    if (mutationPos) {
+      v.addStyle({ resi: mutationPos }, { stick: { color: '#ef4444', radius: 0.5 } });
+      v.addLabel(`Mut ${mutationPos}`, {
+        backgroundColor: 'rgba(220,38,38,0.75)',
+        fontColor: 'white',
+        fontSize: 11,
+        position: { resi: mutationPos }
+      });
+    }
+    v.zoomTo();
+    v.render();
+    v.spin('y', 0.5);
+    setViewer(v);
+    return () => { if (v) v.clear(); };
+  }, [pdbString, mutationPos]);
 
-    const changeStyle = (s) => {
-        if (!viewer) return;
-        setStyle(s);
-        viewer.setStyle({}, { [s]: { color } });
-        if (mutationPos) viewer.addStyle({ resi: mutationPos }, { stick: { color: 'red', radius: 0.5 } });
-        viewer.render();
-    };
+  const applyStyle = (s, c) => {
+    if (!viewer) return;
+    viewer.setStyle({}, { [s]: { color: c } });
+    if (mutationPos) viewer.addStyle({ resi: mutationPos }, { stick: { color: '#ef4444', radius: 0.5 } });
+    viewer.render();
+  };
 
-    const changeColor = (c) => {
-        if (!viewer) return;
-        setColor(c);
-        viewer.setStyle({}, { [style]: { color: c } });
-        if (mutationPos) viewer.addStyle({ resi: mutationPos }, { stick: { color: 'red', radius: 0.5 } });
-        viewer.render();
-    };
+  const changeStyle = (s) => { setStyle(s); applyStyle(s, color); };
+  const changeColor = (c) => { setColor(c); applyStyle(style, c); };
 
-    const takeScreenshot = () => {
-        if (!viewer) return;
-        const img = viewer.pngURI();
-        const link = document.createElement('a');
-        link.href = img;
-        link.download = 'protein_structure.png';
-        link.click();
-    };
+  const toggleSpin = () => {
+    if (!viewer) return;
+    if (spinning) { viewer.spin(false); } else { viewer.spin('y', 0.5); }
+    setSpinning(!spinning);
+  };
 
-    const toggleFullscreen = () => {
-        const el = viewerRef.current?.parentElement;
-        if (!el) return;
-        if (!document.fullscreenElement) {
-            el.requestFullscreen();
-            setIsFullscreen(true);
-        } else {
-            document.exitFullscreen();
-            setIsFullscreen(false);
-        }
-    };
+  const takeScreenshot = () => {
+    if (!viewer) return;
+    const link = document.createElement('a');
+    link.href = viewer.pngURI();
+    link.download = 'protein_structure.png';
+    link.click();
+  };
 
-    return (
-        <div className="glass rounded-3xl overflow-hidden relative group">
-            <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent pointer-events-none z-0" />
-            <div ref={viewerRef} className="w-full h-[520px] relative z-10" style={{ background: 'radial-gradient(ellipse at center, rgba(15,23,42,0.8) 0%, rgba(3,7,17,0.95) 100%)' }} />
+  const toggleFullscreen = () => {
+    const el = viewerRef.current?.parentElement;
+    if (!el) return;
+    if (!document.fullscreenElement) { el.requestFullscreen(); setIsFullscreen(true); }
+    else { document.exitFullscreen(); setIsFullscreen(false); }
+  };
 
-            {/* Toolbar Top-Right */}
-            <div className="absolute top-4 right-4 flex flex-col gap-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button onClick={takeScreenshot} title="Screenshot" className="p-2.5 glass rounded-xl hover:bg-white/10 transition-colors">
-                    <Camera size={16} className="text-gray-400" />
-                </button>
-                <button onClick={() => { viewer?.spin(false); viewer?.zoomTo(); viewer?.render(); }} title="Reset" className="p-2.5 glass rounded-xl hover:bg-white/10 transition-colors">
-                    <RefreshCw size={16} className="text-gray-400" />
-                </button>
-                <button onClick={toggleFullscreen} title="Fullscreen" className="p-2.5 glass rounded-xl hover:bg-white/10 transition-colors">
-                    <Expand size={16} className="text-gray-400" />
-                </button>
-            </div>
+  return (
+    <div className="glass rounded-3xl overflow-hidden relative group">
+      {/* Top accent */}
+      <div className="h-px bg-gradient-to-r from-transparent via-blue-500/40 to-transparent" />
 
-            {/* Style/Color Controls */}
-            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center z-20">
-                <div className="flex gap-1 p-1 glass rounded-xl">
-                    {STYLES.map(s => (
-                        <button
-                            key={s}
-                            onClick={() => changeStyle(s)}
-                            className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold capitalize transition-all ${
-                                style === s
-                                    ? 'bg-blue-500/20 text-blue-300 shadow-inner'
-                                    : 'text-gray-500 hover:text-gray-300'
-                            }`}
-                        >
-                            {s}
-                        </button>
-                    ))}
-                </div>
-                <div className="flex gap-1 p-1 glass rounded-xl">
-                    {COLORS.map(c => (
-                        <button
-                            key={c}
-                            onClick={() => changeColor(c)}
-                            className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold capitalize transition-all ${
-                                color === c
-                                    ? 'bg-purple-500/20 text-purple-300 shadow-inner'
-                                    : 'text-gray-500 hover:text-gray-300'
-                            }`}
-                        >
-                            {c}
-                        </button>
-                    ))}
-                </div>
-            </div>
+      {/* Header bar */}
+      <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.04]">
+        <div className="flex items-center space-x-2">
+          <Layers size={14} className="text-blue-400" />
+          <span className="text-xs font-semibold text-gray-400 font-display">3D Structure</span>
+          {mutationPos && (
+            <span className="px-2 py-0.5 rounded-md bg-red-500/10 border border-red-500/20 text-[9px] text-red-400 font-bold">
+              Mut @ {mutationPos}
+            </span>
+          )}
         </div>
-    );
+        <div className="flex items-center space-x-1">
+          <button onClick={toggleSpin} title={spinning ? 'Pause' : 'Spin'}
+            className="p-2 rounded-lg hover:bg-white/[0.06] transition-colors text-gray-500 hover:text-gray-200">
+            {spinning ? <Pause size={13} /> : <Play size={13} />}
+          </button>
+          <button onClick={takeScreenshot} title="Screenshot"
+            className="p-2 rounded-lg hover:bg-white/[0.06] transition-colors text-gray-500 hover:text-gray-200">
+            <Camera size={13} />
+          </button>
+          <button onClick={() => { viewer?.spin(false); viewer?.zoomTo(); viewer?.render(); setSpinning(false); }} title="Reset"
+            className="p-2 rounded-lg hover:bg-white/[0.06] transition-colors text-gray-500 hover:text-gray-200">
+            <RefreshCw size={13} />
+          </button>
+          <button onClick={toggleFullscreen} title="Fullscreen"
+            className="p-2 rounded-lg hover:bg-white/[0.06] transition-colors text-gray-500 hover:text-gray-200">
+            <Expand size={13} />
+          </button>
+        </div>
+      </div>
+
+      {/* Viewer */}
+      <div
+        ref={viewerRef}
+        className="w-full"
+        style={{
+          height: '480px',
+          background: 'radial-gradient(ellipse at center, rgba(10,18,40,0.9) 0%, rgba(2,4,12,0.98) 100%)'
+        }}
+      />
+
+      {/* Bottom Controls */}
+      <div className="flex items-center justify-between px-5 py-3 border-t border-white/[0.04]">
+        {/* Style */}
+        <div className="flex gap-1 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+          {STYLES.map(s => (
+            <button key={s} onClick={() => changeStyle(s)}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold capitalize transition-all ${
+                style === s ? 'bg-blue-600/20 text-blue-300' : 'text-gray-600 hover:text-gray-300'
+              }`}>
+              {s}
+            </button>
+          ))}
+        </div>
+        {/* Color */}
+        <div className="flex gap-1 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+          {COLORS.map(c => (
+            <button key={c} onClick={() => changeColor(c)}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold capitalize transition-all ${
+                color === c ? 'bg-violet-600/20 text-violet-300' : 'text-gray-600 hover:text-gray-300'
+              }`}>
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default StructureViewer;

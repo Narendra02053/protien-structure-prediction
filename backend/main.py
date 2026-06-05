@@ -12,14 +12,33 @@ from perplexity import PerplexityComparator
 
 app = FastAPI(title="Protein Disease Predictor API")
 
-# Enable CORS
+# Security: Define allowed origins (restrict from "*")
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+# Enable CORS with security best practices
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Optional: Add security headers middleware
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    return response
+
 
 # Global models (loaded on startup)
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "esm2-finetuned-final")

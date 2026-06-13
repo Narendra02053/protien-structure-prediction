@@ -14,11 +14,11 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="tooltip-glass p-3 text-xs space-y-1.5">
-      <p className="font-bold text-white">{label}</p>
+      <p className="font-extrabold text-white">{label}</p>
       {payload.map(p => (
         <div key={p.name} className="flex items-center justify-between space-x-4">
-          <span style={{ color: p.color }}>{p.name}</span>
-          <span className="font-mono font-bold text-white">{p.value}</span>
+          <span style={{ color: p.color }} className="font-bold">{p.name}</span>
+          <span className="font-mono font-extrabold text-white">{p.value}</span>
         </div>
       ))}
     </div>
@@ -29,28 +29,27 @@ const PerplexityComparison = ({ currentComparison }) => {
   const avgImprovement = (STATIC_DATA.reduce((a, b) => a + parseFloat(b.improvement), 0) / STATIC_DATA.length).toFixed(1);
 
   return (
-    <div className="glass rounded-3xl overflow-hidden">
-      <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
+    <div className="glass overflow-hidden">
+      <div className="h-3 bg-accent-emerald border-b-3 border-white" />
       <div className="p-8 space-y-8">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-              <Award className="text-emerald-400" size={22} />
+            <div className="neo-icon-box w-12 h-12 bg-accent-emerald">
+              <Award className="text-[#0a0a0a]" size={22} strokeWidth={2.5} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white font-display">Perplexity Benchmark</h3>
-              <p className="text-xs text-gray-500">Fine-tuned vs Baseline ESM-2</p>
+              <h3 className="text-lg font-extrabold text-white font-display">Perplexity Benchmark</h3>
+              <p className="text-xs text-white/50 font-bold">Fine-tuned vs Baseline ESM-2</p>
             </div>
           </div>
           <div className="flex gap-3">
-            <div className="stat-pill px-4 py-2 rounded-xl text-center">
-              <p className="text-[8px] text-gray-600 uppercase tracking-wider">Avg Improvement</p>
-              <p className="text-base font-bold font-mono text-emerald-400">{avgImprovement}%</p>
+            <div className="stat-pill px-4 py-2 text-center bg-accent-emerald">
+              <p className="text-[8px] text-[#0a0a0a] uppercase tracking-wider font-extrabold">Avg Improvement</p>
+              <p className="text-base font-extrabold font-mono text-[#0a0a0a]">{avgImprovement}%</p>
             </div>
-            <div className="stat-pill px-4 py-2 rounded-xl text-center">
-              <p className="text-[8px] text-gray-600 uppercase tracking-wider">Proteins</p>
-              <p className="text-base font-bold font-mono text-blue-400">5/5</p>
+            <div className="stat-pill px-4 py-2 text-center bg-accent-blue">
+              <p className="text-[8px] text-[#0a0a0a] uppercase tracking-wider font-extrabold">Proteins</p>
+              <p className="text-base font-extrabold font-mono text-[#0a0a0a]">5/5</p>
             </div>
           </div>
         </div>
@@ -61,36 +60,36 @@ const PerplexityComparison = ({ currentComparison }) => {
           <div className="h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={STATIC_DATA} margin={{ top: 5, right: 5, bottom: 5, left: -12 }} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-                <XAxis dataKey="name" stroke="#334155" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
-                <YAxis stroke="#334155" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(37,99,235,0.04)' }} />
-                <Legend wrapperStyle={{ fontSize: '11px', color: '#64748b' }} />
-                <Bar dataKey="baseline" name="Baseline" fill="rgba(100,116,139,0.5)" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="finetuned" name="Fine-tuned" fill="#2563eb" radius={[4, 4, 0, 0]} />
+                <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.08)" vertical={false} />
+                <XAxis dataKey="name" stroke="#ffffff" tick={{ fontSize: 10, fill: '#ffffff', fontWeight: 700 }} axisLine={false} tickLine={false} />
+                <YAxis stroke="#ffffff" tick={{ fontSize: 10, fill: '#ffffff', fontWeight: 700 }} axisLine={false} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,230,0,0.1)' }} />
+                <Legend wrapperStyle={{ fontSize: '11px', color: '#ffffff', fontWeight: 700 }} />
+                <Bar dataKey="baseline" name="Baseline" fill="#C9A0FF" radius={0} />
+                <Bar dataKey="finetuned" name="Fine-tuned" fill="#7C9EFF" radius={0} />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
           {/* Table */}
-          <div className="overflow-hidden rounded-2xl border border-white/[0.05]">
+          <div className="overflow-hidden border-3 border-white shadow-neo-sm">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr style={{ background: 'rgba(255,255,255,0.02)' }}>
+                <tr className="bg-accent-yellow border-b-3 border-white">
                   {['Protein', 'Base', 'Fine-tuned', 'Δ'].map(h => (
-                    <th key={h} className="p-3 text-[9px] text-gray-600 uppercase tracking-widest font-bold">{h}</th>
+                    <th key={h} className="p-3 text-[9px] text-[#0a0a0a] uppercase tracking-widest font-extrabold">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.03]">
+              <tbody className="divide-y-2 divide-white/20">
                 {STATIC_DATA.map(p => (
-                  <tr key={p.name} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="p-3 font-medium text-gray-300 text-xs font-display">{p.name}</td>
-                    <td className="p-3 font-mono text-gray-500 text-xs">{p.baseline}</td>
-                    <td className="p-3 font-mono text-blue-400 font-bold text-xs">{p.finetuned}</td>
+                  <tr key={p.name} className="hover:bg-accent-cyan/10 transition-colors bg-[#141414]">
+                    <td className="p-3 font-extrabold text-white text-xs font-display">{p.name}</td>
+                    <td className="p-3 font-mono text-white/50 text-xs font-bold">{p.baseline}</td>
+                    <td className="p-3 font-mono text-white font-extrabold text-xs">{p.finetuned}</td>
                     <td className="p-3">
-                      <span className="flex items-center space-x-1 text-emerald-400 text-xs font-bold">
-                        <CheckCircle2 size={11} />
+                      <span className="flex items-center space-x-1 text-accent-emerald text-xs font-extrabold">
+                        <CheckCircle2 size={11} strokeWidth={2.5} />
                         <span>{p.improvement}%</span>
                       </span>
                     </td>
@@ -103,25 +102,24 @@ const PerplexityComparison = ({ currentComparison }) => {
 
         {/* Live comparison if available */}
         {currentComparison && (
-          <div className="grid grid-cols-3 gap-4 p-4 rounded-2xl border border-blue-500/15" style={{ background: 'rgba(37,99,235,0.05)' }}>
+          <div className="grid grid-cols-3 gap-4 p-4 border-3 border-white bg-accent-blue shadow-neo-sm">
             {[
-              { label: 'Baseline Perplexity', value: currentComparison.baseline_perplexity?.toFixed(2), color: '#94a3b8' },
-              { label: 'Fine-tuned Perplexity', value: currentComparison.finetuned_perplexity?.toFixed(2), color: '#60a5fa' },
-              { label: 'Improvement', value: `${currentComparison.improvement_percent?.toFixed(1)}%`, color: '#34d399' },
+              { label: 'Baseline Perplexity', value: currentComparison.baseline_perplexity?.toFixed(2), bg: '#C9A0FF' },
+              { label: 'Fine-tuned Perplexity', value: currentComparison.finetuned_perplexity?.toFixed(2), bg: '#7C9EFF' },
+              { label: 'Improvement', value: `${currentComparison.improvement_percent?.toFixed(1)}%`, bg: '#7CFF6B' },
             ].map(s => (
-              <div key={s.label} className="text-center">
-                <p className="text-[9px] text-gray-600 uppercase tracking-wider mb-1">{s.label}</p>
-                <p className="text-lg font-bold font-mono" style={{ color: s.color }}>{s.value ?? 'N/A'}</p>
+              <div key={s.label} className="text-center stat-pill p-3" style={{ background: s.bg }}>
+                <p className="text-[9px] text-[#0a0a0a] uppercase tracking-wider mb-1 font-extrabold">{s.label}</p>
+                <p className="text-lg font-extrabold font-mono text-[#0a0a0a]">{s.value ?? 'N/A'}</p>
               </div>
             ))}
           </div>
         )}
 
-        {/* Quote */}
-        <div className="p-4 rounded-2xl border border-blue-500/10" style={{ background: 'rgba(37,99,235,0.04)' }}>
+        <div className="p-4 border-3 border-white bg-accent-yellow shadow-neo-sm">
           <div className="flex items-start space-x-3">
-            <Zap className="text-blue-400 flex-shrink-0 mt-0.5" size={14} />
-            <p className="text-blue-300/70 text-xs italic leading-relaxed">
+            <Zap className="text-[#0a0a0a] flex-shrink-0 mt-0.5" size={14} strokeWidth={2.5} />
+            <p className="text-[#0a0a0a] text-xs font-bold leading-relaxed">
               Fine-tuned model outperforms baseline on all 5 human proteins, demonstrating improved domain-specific understanding of the human proteome.
             </p>
           </div>

@@ -3,25 +3,19 @@ import { X, CheckCircle2, AlertCircle, Info } from 'lucide-react';
 
 const CONFIGS = {
   success: {
-    icon: <CheckCircle2 size={17} />,
-    color: '#34d399',
-    bg: 'rgba(5,150,105,0.12)',
-    border: 'rgba(5,150,105,0.25)',
-    bar: 'from-emerald-500 to-teal-500',
+    icon: <CheckCircle2 size={17} strokeWidth={2.5} />,
+    bg: '#7CFF6B',
+    bar: '#0a0a0a',
   },
   error: {
-    icon: <AlertCircle size={17} />,
-    color: '#f87171',
-    bg: 'rgba(220,38,38,0.12)',
-    border: 'rgba(220,38,38,0.25)',
-    bar: 'from-red-500 to-orange-500',
+    icon: <AlertCircle size={17} strokeWidth={2.5} />,
+    bg: '#FF6B6B',
+    bar: '#0a0a0a',
   },
   info: {
-    icon: <Info size={17} />,
-    color: '#60a5fa',
-    bg: 'rgba(37,99,235,0.12)',
-    border: 'rgba(37,99,235,0.25)',
-    bar: 'from-blue-500 to-cyan-500',
+    icon: <Info size={17} strokeWidth={2.5} />,
+    bg: '#7C9EFF',
+    bar: '#0a0a0a',
   },
 };
 
@@ -45,41 +39,30 @@ const Toast = ({ message, type = 'info', onClose }) => {
       style={{ maxWidth: '360px', minWidth: '280px' }}
     >
       <div
-        className="rounded-2xl overflow-hidden shadow-2xl"
-        style={{
-          background: 'rgba(6, 10, 22, 0.92)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          border: `1px solid ${cfg.border}`,
-          boxShadow: `0 8px 40px rgba(0,0,0,0.6), 0 0 30px ${cfg.color}15`,
-        }}
+        className="overflow-hidden border-3 border-white shadow-neo-lg bg-[#141414]"
       >
-        {/* Progress bar */}
-        <div className="h-0.5 w-full bg-gray-900/60">
+        <div className="h-2 w-full bg-[#1a1a1a] border-b-2 border-white">
           <div
-            className={`h-full bg-gradient-to-r ${cfg.bar} transition-all duration-100`}
-            style={{ width: `${progress}%` }}
+            className="h-full transition-all duration-100"
+            style={{ width: `${progress}%`, background: cfg.bar }}
           />
         </div>
 
         <div className="flex items-center space-x-3 px-5 py-4">
-          {/* Icon */}
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{ background: cfg.bg, color: cfg.color }}
+            className="neo-icon-box w-9 h-9 flex-shrink-0"
+            style={{ background: cfg.bg, color: '#0a0a0a' }}
           >
             {cfg.icon}
           </div>
 
-          {/* Message */}
-          <p className="text-sm text-gray-200 font-medium flex-1 leading-snug">{message}</p>
+          <p className="text-sm text-white font-extrabold flex-1 leading-snug">{message}</p>
 
-          {/* Close */}
           <button
             onClick={onClose}
-            className="flex-shrink-0 p-1.5 rounded-lg text-gray-600 hover:text-gray-300 hover:bg-white/[0.06] transition-all"
+            className="neo-btn-icon flex-shrink-0 p-1.5"
           >
-            <X size={13} />
+            <X size={13} strokeWidth={2.5} />
           </button>
         </div>
       </div>

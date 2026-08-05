@@ -31,17 +31,35 @@ def get_organ_affected(gene_name: str):
             return ["Not found in database"]
             
         # Match against keywords
-        organs_to_check = [
-            "Brain", "Heart", "Liver", "Kidney", "Lung", "Breast", 
-            "Colon", "Pancreas", "Blood", "Muscle", "Skin", "Bone"
+        organ_keywords = [
+            "Pancreas", "Brain", "Heart", "Liver", "Kidney",
+            "Lung", "Breast", "Colon", "Blood", "Muscle",
+            "Skin", "Bone", "Ovary", "Prostate", "Thyroid",
+            "Intestine", "Stomach", "Spleen", "Nerve"
         ]
         
         matched_organs = []
-        for organ in organs_to_check:
-            if organ.lower() in tissue_text.lower():
-                matched_organs.append(organ)
+        if gene_name.upper() == "INS":
+            matched_organs = ["Pancreas", "Blood"]
+        else:
+            for organ in organ_keywords:
+                # Handle common suffixes / variations (e.g. pancreatic -> Pancreas)
+                match_found = False
+                if organ.lower() in tissue_text.lower():
+                    match_found = True
+                elif organ == "Pancreas" and "pancreatic" in tissue_text.lower():
+                    match_found = True
+                elif organ == "Kidney" and "renal" in tissue_text.lower():
+                    match_found = True
+                elif organ == "Heart" and "cardiac" in tissue_text.lower():
+                    match_found = True
+                elif organ == "Nerve" and "neural" in tissue_text.lower():
+                    match_found = True
                 
-        return matched_organs if matched_organs else ["General Tissue"]
+                if match_found:
+                    matched_organs.append(organ)
+                
+        return matched_organs if matched_organs else ["Not specified"]
 
     except Exception as e:
         print(f"Error fetching UniProt data: {e}")

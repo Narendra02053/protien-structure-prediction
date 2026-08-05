@@ -52,7 +52,9 @@ class VariantAnalyzer:
         llr = math.log(mut_prob / orig_prob)
         
         # Use stricter threshold + cross reference ClinVar count
-        if llr < -1.5 or (llr < 0 and clinvar_count > 500):
+        if llr < -1.5:
+            pathogenicity = "Likely Pathogenic"
+        elif llr < 0 and clinvar_count > 1000:
             pathogenicity = "Likely Pathogenic"
         else:
             pathogenicity = "Likely Benign"

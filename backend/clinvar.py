@@ -73,40 +73,32 @@ def get_disease_details(gene_name: str, mutation: str):
         # Extract disease name using cascading priority
         disease_name = "Not found in database"
         
-        # Strategy A: trait_set
-        trait_set = uid_data.get("trait_set", [])
-        if trait_set and len(trait_set) > 0 and disease_name == "Not found in database":
-            tn = trait_set[0].get("trait_name")
-            if tn: disease_name = tn if isinstance(tn, str) else str(tn)
-            
-        # Strategy B: variation_set
-        variation_set = uid_data.get("variation_set", [])
-        if variation_set and len(variation_set) > 0 and disease_name == "Not found in database":
-            vn = variation_set[0].get("variation_name")
-            if vn: disease_name = vn if isinstance(vn, str) else str(vn)
-            
-        # Strategy C: condition_list
-        condition_list = uid_data.get("condition_list", [])
-        if condition_list and len(condition_list) > 0 and disease_name == "Not found in database":
-            cn = condition_list[0].get("condition_name")
-            if cn: disease_name = cn if isinstance(cn, str) else str(cn)
-
-        # Strategy D: efetch backoff
-        if disease_name == "Not found in database":
+        # Try these fields in order
+        try:
+            disease_name = uid_data["germline_classification"]["trait_set"][0]["trait_name"]
+        except:
             try:
-                fetch_url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=clinvar&id={variant_id}&rettype=clinvarset&retmode=json"
-                fetch_resp = requests.get(fetch_url, timeout=10)
-                # Parse depending on the structure returned
-                if 'json' in fetch_resp.headers.get('Content-Type', '').lower():
-                    f_data = fetch_resp.json()
-                    # Just attempt extraction if valid JSON structure provided
-                    disease_name = str(f_data)
-                elif '<Condition ' in fetch_resp.text:
-                    root = ET.fromstring(fetch_resp.text)
-                    for condition in root.iter('ConditionName'):
-                        disease_name = condition.text
-                        break
-            except Exception as fe:
+                disease_name = uid_data["trait_set"][0]["trait_name"]
+            except:
+                pass
+        
+        # If trait_name wasn't found, try description
+        if disease_name == "Not found in database" or disease_name == "":
+            try:
+                disease_name = uid_data["germline_classification"]["description"]
+            except:
+                pass
+                
+        # If still not found, try title
+        if disease_name == "Not found in database" or disease_name == "":
+            try:
+                disease = uid_data["title"]
+                # clean up — remove variant notation
+                if "(" in disease:
+                    disease = disease.split("AND")[-1].strip()
+                    disease = disease.replace(")", "").replace("(", "").strip()
+                disease_name = disease
+            except:
                 pass
         
         # Extract severity

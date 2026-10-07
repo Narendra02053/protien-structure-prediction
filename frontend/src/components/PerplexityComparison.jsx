@@ -1,6 +1,6 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { CheckCircle2, TrendingDown, Award, Zap } from 'lucide-react';
+import { CheckCircle2, Award, Zap } from 'lucide-react';
 
 const STATIC_DATA = [
   { name: 'Insulin', baseline: 13.63, finetuned: 11.85 },
@@ -13,12 +13,12 @@ const STATIC_DATA = [
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="tooltip-glass p-3 text-xs space-y-1.5">
-      <p className="font-extrabold text-white">{label}</p>
+    <div className="tooltip-glass p-3 text-xs space-y-1.5 border border-slate-700 bg-slate-900/95 rounded-lg shadow-xl">
+      <p className="font-semibold text-slate-200">{label}</p>
       {payload.map(p => (
         <div key={p.name} className="flex items-center justify-between space-x-4">
-          <span style={{ color: p.color }} className="font-bold">{p.name}</span>
-          <span className="font-mono font-extrabold text-white">{p.value}</span>
+          <span style={{ color: p.color }} className="font-medium">{p.name}</span>
+          <span className="font-mono font-semibold text-slate-100">{p.value}</span>
         </div>
       ))}
     </div>
@@ -29,68 +29,68 @@ const PerplexityComparison = ({ currentComparison }) => {
   const avgImprovement = (STATIC_DATA.reduce((a, b) => a + parseFloat(b.improvement), 0) / STATIC_DATA.length).toFixed(1);
 
   return (
-    <div className="glass overflow-hidden">
-      <div className="h-3 bg-accent-emerald border-b-3 border-white" />
-      <div className="p-8 space-y-8">
+    <div className="glass overflow-hidden border border-slate-800">
+      <div className="h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-500" />
+      <div className="p-6 md:p-8 space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex items-center space-x-4">
-            <div className="neo-icon-box w-12 h-12 bg-accent-emerald">
-              <Award className="text-[#0a0a0a]" size={22} strokeWidth={2.5} />
+          <div className="flex items-center space-x-3.5">
+            <div className="neo-icon-box w-10 h-10 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-xl">
+              <Award size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-extrabold text-white font-display">Perplexity Benchmark</h3>
-              <p className="text-xs text-white/50 font-bold">Fine-tuned vs Baseline ESM-2</p>
+              <h3 className="text-base font-bold text-white font-display">Perplexity Benchmark</h3>
+              <p className="text-xs text-slate-400">Fine-tuned ESM-2 vs Baseline ESM-2 Model</p>
             </div>
           </div>
           <div className="flex gap-3">
-            <div className="stat-pill px-4 py-2 text-center bg-accent-emerald">
-              <p className="text-[8px] text-[#0a0a0a] uppercase tracking-wider font-extrabold">Avg Improvement</p>
-              <p className="text-base font-extrabold font-mono text-[#0a0a0a]">{avgImprovement}%</p>
+            <div className="stat-pill px-4 py-2 text-center bg-slate-900/80 border border-slate-800 rounded-xl">
+              <p className="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Avg Improvement</p>
+              <p className="text-base font-bold font-mono text-emerald-400">{avgImprovement}%</p>
             </div>
-            <div className="stat-pill px-4 py-2 text-center bg-accent-blue">
-              <p className="text-[8px] text-[#0a0a0a] uppercase tracking-wider font-extrabold">Proteins</p>
-              <p className="text-base font-extrabold font-mono text-[#0a0a0a]">5/5</p>
+            <div className="stat-pill px-4 py-2 text-center bg-slate-900/80 border border-slate-800 rounded-xl">
+              <p className="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Proteins Tested</p>
+              <p className="text-base font-bold font-mono text-blue-400">5 / 5</p>
             </div>
           </div>
         </div>
 
         {/* Chart + Table */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
           {/* Bar Chart */}
-          <div className="h-[280px]">
+          <div className="h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={STATIC_DATA} margin={{ top: 5, right: 5, bottom: 5, left: -12 }} barGap={4}>
-                <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.08)" vertical={false} />
-                <XAxis dataKey="name" stroke="#ffffff" tick={{ fontSize: 10, fill: '#ffffff', fontWeight: 700 }} axisLine={false} tickLine={false} />
-                <YAxis stroke="#ffffff" tick={{ fontSize: 10, fill: '#ffffff', fontWeight: 700 }} axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,230,0,0.1)' }} />
-                <Legend wrapperStyle={{ fontSize: '11px', color: '#ffffff', fontWeight: 700 }} />
-                <Bar dataKey="baseline" name="Baseline" fill="#C9A0FF" radius={0} />
-                <Bar dataKey="finetuned" name="Fine-tuned" fill="#7C9EFF" radius={0} />
+              <BarChart data={STATIC_DATA} margin={{ top: 5, right: 5, bottom: 5, left: -12 }} barGap={6}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+                <XAxis dataKey="name" stroke="#64748b" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                <YAxis stroke="#64748b" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(99,102,241,0.06)' }} />
+                <Legend wrapperStyle={{ fontSize: '11px', color: '#94a3b8', paddingTop: '8px' }} />
+                <Bar dataKey="baseline" name="Baseline ESM-2" fill="#818cf8" radius={[4, 4, 0, 0]} maxBarSize={20} />
+                <Bar dataKey="finetuned" name="Fine-tuned ESM-2" fill="#38bdf8" radius={[4, 4, 0, 0]} maxBarSize={20} />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
           {/* Table */}
-          <div className="overflow-hidden border-3 border-white shadow-neo-sm">
-            <table className="w-full text-left text-sm">
+          <div className="overflow-hidden border border-slate-800 rounded-xl bg-slate-900/60">
+            <table className="w-full text-left text-xs">
               <thead>
-                <tr className="bg-accent-yellow border-b-3 border-white">
-                  {['Protein', 'Base', 'Fine-tuned', 'Δ'].map(h => (
-                    <th key={h} className="p-3 text-[9px] text-[#0a0a0a] uppercase tracking-widest font-extrabold">{h}</th>
+                <tr className="bg-slate-900 border-b border-slate-800">
+                  {['Protein', 'Base', 'Fine-tuned', 'Δ Improvement'].map(h => (
+                    <th key={h} className="p-3 text-[10px] text-slate-400 uppercase tracking-wider font-semibold">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y-2 divide-white/20">
+              <tbody className="divide-y divide-slate-800/60">
                 {STATIC_DATA.map(p => (
-                  <tr key={p.name} className="hover:bg-accent-cyan/10 transition-colors bg-[#141414]">
-                    <td className="p-3 font-extrabold text-white text-xs font-display">{p.name}</td>
-                    <td className="p-3 font-mono text-white/50 text-xs font-bold">{p.baseline}</td>
-                    <td className="p-3 font-mono text-white font-extrabold text-xs">{p.finetuned}</td>
+                  <tr key={p.name} className="hover:bg-slate-800/40 transition-colors">
+                    <td className="p-3 font-semibold text-slate-200 text-xs">{p.name}</td>
+                    <td className="p-3 font-mono text-slate-400 text-xs">{p.baseline}</td>
+                    <td className="p-3 font-mono text-slate-200 font-semibold text-xs">{p.finetuned}</td>
                     <td className="p-3">
-                      <span className="flex items-center space-x-1 text-accent-emerald text-xs font-extrabold">
-                        <CheckCircle2 size={11} strokeWidth={2.5} />
-                        <span>{p.improvement}%</span>
+                      <span className="inline-flex items-center space-x-1 text-emerald-400 text-xs font-semibold">
+                        <CheckCircle2 size={12} />
+                        <span>+{p.improvement}%</span>
                       </span>
                     </td>
                   </tr>
@@ -102,25 +102,25 @@ const PerplexityComparison = ({ currentComparison }) => {
 
         {/* Live comparison if available */}
         {currentComparison && (
-          <div className="grid grid-cols-3 gap-4 p-4 border-3 border-white bg-accent-blue shadow-neo-sm">
+          <div className="grid grid-cols-3 gap-3 p-4 border border-slate-800 rounded-xl bg-slate-900/80">
             {[
-              { label: 'Baseline Perplexity', value: currentComparison.baseline_perplexity?.toFixed(2), bg: '#C9A0FF' },
-              { label: 'Fine-tuned Perplexity', value: currentComparison.finetuned_perplexity?.toFixed(2), bg: '#7C9EFF' },
-              { label: 'Improvement', value: `${currentComparison.improvement_percent?.toFixed(1)}%`, bg: '#7CFF6B' },
+              { label: 'Baseline Perplexity', value: currentComparison.baseline_perplexity?.toFixed(2), color: 'text-indigo-400' },
+              { label: 'Fine-tuned Perplexity', value: currentComparison.finetuned_perplexity?.toFixed(2), color: 'text-blue-400' },
+              { label: 'Improvement', value: `${currentComparison.improvement_percent?.toFixed(1)}%`, color: 'text-emerald-400' },
             ].map(s => (
-              <div key={s.label} className="text-center stat-pill p-3" style={{ background: s.bg }}>
-                <p className="text-[9px] text-[#0a0a0a] uppercase tracking-wider mb-1 font-extrabold">{s.label}</p>
-                <p className="text-lg font-extrabold font-mono text-[#0a0a0a]">{s.value ?? 'N/A'}</p>
+              <div key={s.label} className="text-center p-2.5 rounded-lg bg-slate-800/50">
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1 font-medium">{s.label}</p>
+                <p className={`text-base font-bold font-mono ${s.color}`}>{s.value ?? 'N/A'}</p>
               </div>
             ))}
           </div>
         )}
 
-        <div className="p-4 border-3 border-white bg-accent-yellow shadow-neo-sm">
+        <div className="p-4 border border-indigo-500/20 bg-indigo-500/10 rounded-xl">
           <div className="flex items-start space-x-3">
-            <Zap className="text-[#0a0a0a] flex-shrink-0 mt-0.5" size={14} strokeWidth={2.5} />
-            <p className="text-[#0a0a0a] text-xs font-bold leading-relaxed">
-              Fine-tuned model outperforms baseline on all 5 human proteins, demonstrating improved domain-specific understanding of the human proteome.
+            <Zap className="text-indigo-400 flex-shrink-0 mt-0.5" size={16} />
+            <p className="text-indigo-200 text-xs font-normal leading-relaxed">
+              The fine-tuned ESM-2 model consistently achieves lower perplexity across test proteins, confirming superior domain adaptation to human proteomic sequences.
             </p>
           </div>
         </div>

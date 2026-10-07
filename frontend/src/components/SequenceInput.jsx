@@ -26,17 +26,17 @@ const LOADING_MESSAGES = [
 
 /* ─── Animated DNA Helix SVG ─── */
 const DNAHelix = () => (
-  <svg viewBox="0 0 120 300" className="w-full h-full" style={{ filter: 'drop-shadow(4px 4px 0 rgba(255,230,0,0.3))' }}>
+  <svg viewBox="0 0 120 300" className="w-full h-full" style={{ filter: 'drop-shadow(0 10px 20px rgba(99,102,241,0.25))' }}>
     <defs>
       <linearGradient id="strand1" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#7C9EFF" stopOpacity="0.9" />
-        <stop offset="50%" stopColor="#C9A0FF" stopOpacity="0.7" />
-        <stop offset="100%" stopColor="#4ECDC4" stopOpacity="0.9" />
+        <stop offset="0%" stopColor="#818CF8" stopOpacity="0.9" />
+        <stop offset="50%" stopColor="#C084FC" stopOpacity="0.7" />
+        <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.9" />
       </linearGradient>
       <linearGradient id="strand2" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#7CFF6B" stopOpacity="0.8" />
-        <stop offset="50%" stopColor="#7C9EFF" stopOpacity="0.6" />
-        <stop offset="100%" stopColor="#C9A0FF" stopOpacity="0.8" />
+        <stop offset="0%" stopColor="#34D399" stopOpacity="0.8" />
+        <stop offset="50%" stopColor="#818CF8" stopOpacity="0.6" />
+        <stop offset="100%" stopColor="#C084FC" stopOpacity="0.8" />
       </linearGradient>
     </defs>
     {/* Strand 1 */}
@@ -50,10 +50,10 @@ const DNAHelix = () => (
       const phase = (i % 2 === 0) ? 0 : 1;
       const x1 = phase === 0 ? 28 : 92;
       const x2 = phase === 0 ? 92 : 28;
-      const colors = ['#7C9EFF','#C9A0FF','#7CFF6B','#FF6B9D','#FF9F43'];
+      const colors = ['#818CF8','#C084FC','#34D399','#F472B6','#38BDF8'];
       return (
         <g key={y}>
-          <line x1={x1} y1={y} x2={x2} y2={y} stroke={colors[i % colors.length]} strokeWidth="1.5" opacity="0.6" />
+          <line x1={x1} y1={y} x2={x2} y2={y} stroke={colors[i % colors.length]} strokeWidth="1.5" opacity="0.5" />
           <circle cx={x1} cy={y} r="3" fill={colors[i % colors.length]} opacity="0.8" />
           <circle cx={x2} cy={y} r="3" fill={colors[(i+2) % colors.length]} opacity="0.8" />
         </g>
@@ -63,9 +63,8 @@ const DNAHelix = () => (
 );
 
 /* ─── Feature Pill ─── */
-const FeaturePill = ({ icon, label, color }) => (
-  <div className="inline-flex items-center space-x-2 px-3 py-1.5 text-xs font-extrabold border-3 border-white shadow-neo-sm"
-    style={{ background: color, color: '#0a0a0a' }}>
+const FeaturePill = ({ icon, label, accentClass }) => (
+  <div className={`inline-flex items-center space-x-2 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-900/80 border border-slate-800 ${accentClass}`}>
     {icon}
     <span>{label}</span>
   </div>
@@ -139,51 +138,48 @@ const SequenceInput = ({ onToast }) => {
     <div className="relative z-10">
       {/* ─── HERO SECTION ─── */}
       <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 pt-16 pb-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto px-6 pt-12 pb-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left: Text */}
-            <div className="space-y-8 animate-fade-in-up">
+            <div className="lg:col-span-8 space-y-6 animate-fade-in-up">
               <div className="space-y-4">
                 <div className="neo-tag">
-                  <Sparkles size={13} strokeWidth={2.5} />
+                  <Sparkles size={14} className="text-indigo-400" />
                   <span>Fine-tuned ESM-2 · 9,752 Human Proteins</span>
                 </div>
-                <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight font-display leading-[1.05] text-white">
-                  <span>Protein</span>
-                  <br />
-                  <span className="gradient-text">Mutation</span>
-                  <br />
-                  <span>Analyzer</span>
+                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight font-display text-white leading-tight">
+                  Protein Structure &amp; <br />
+                  <span className="gradient-text">Mutation Pathogenicity</span> Analyzer
                 </h1>
-                <p className="text-white/60 text-lg leading-relaxed max-w-lg font-medium">
-                  Predict 3D structure, assess pathogenicity via LLR scoring, and benchmark model performance — powered by a fine-tuned ESM-2 transformer.
+                <p className="text-slate-400 text-base leading-relaxed max-w-2xl">
+                  Predict 3D protein structures, quantify variant pathogenicity via Log Likelihood Ratio (LLR) scoring, and benchmark model accuracy — powered by a fine-tuned ESM-2 transformer.
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <FeaturePill icon={<Atom size={12} />} label="ESMFold Structure" color="#7C9EFF" />
-                <FeaturePill icon={<Activity size={12} />} label="pLDDT Confidence" color="#7CFF6B" />
-                <FeaturePill icon={<Database size={12} />} label="ClinVar Integration" color="#C9A0FF" />
-                <FeaturePill icon={<Cpu size={12} />} label="LLR Pathogenicity" color="#FF6B9D" />
+              <div className="flex flex-wrap gap-2.5">
+                <FeaturePill icon={<Atom size={14} className="text-indigo-400" />} label="ESMFold 3D Structure" accentClass="text-slate-200" />
+                <FeaturePill icon={<Activity size={14} className="text-emerald-400" />} label="pLDDT Confidence" accentClass="text-slate-200" />
+                <FeaturePill icon={<Database size={14} className="text-purple-400" />} label="ClinVar Integration" accentClass="text-slate-200" />
+                <FeaturePill icon={<Cpu size={14} className="text-blue-400" />} label="LLR Pathogenicity" accentClass="text-slate-200" />
               </div>
 
               <div className="flex items-center space-x-4 pt-2">
                 {[
-                  { val: '9,752', label: 'Training Proteins', bg: 'bg-accent-yellow' },
-                  { val: '1.42', label: 'Final Loss', bg: 'bg-accent-cyan' },
-                  { val: '8M', label: 'Parameters', bg: 'bg-accent-pink' },
-                ].map((s, i) => (
-                  <div key={s.label} className={`stat-pill px-4 py-3 text-center ${s.bg}`}>
-                    <div className="text-2xl font-extrabold text-[#0a0a0a] font-mono">{s.val}</div>
-                    <div className="text-[10px] text-[#0a0a0a]/70 uppercase tracking-wider font-bold">{s.label}</div>
+                  { val: '9,752', label: 'Training Proteins', color: 'text-indigo-400' },
+                  { val: '1.42', label: 'Final Loss', color: 'text-emerald-400' },
+                  { val: '8M', label: 'Parameters', color: 'text-purple-400' },
+                ].map((s) => (
+                  <div key={s.label} className="stat-pill px-4 py-2.5 text-center bg-slate-900/80 border border-slate-800">
+                    <div className={`text-xl font-bold font-mono ${s.color}`}>{s.val}</div>
+                    <div className="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">{s.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Right: DNA Helix */}
-            <div className="hidden lg:flex justify-center items-center animate-fade-in stagger-2">
-              <div className="relative w-32 h-80 helix-float">
+            <div className="hidden lg:flex lg:col-span-4 justify-center items-center animate-fade-in stagger-2">
+              <div className="relative w-32 h-72 helix-float">
                 <DNAHelix />
               </div>
             </div>
@@ -194,33 +190,33 @@ const SequenceInput = ({ onToast }) => {
       {/* ─── FORM SECTION ─── */}
       <section className="max-w-4xl mx-auto px-6 pb-16 space-y-6">
         {/* Main Card */}
-        <div className="glass overflow-hidden animate-fade-in-up stagger-2">
-          <div className="h-3 bg-accent-yellow border-b-3 border-white" />
-          <div className="p-8 md:p-10 space-y-8">
+        <div className="glass overflow-hidden animate-fade-in-up stagger-2 border border-slate-800">
+          <div className="h-1 bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500" />
+          <div className="p-6 md:p-8 space-y-6">
 
             {/* Sequence Input */}
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               <div className="flex justify-between items-center">
-                <label className="text-sm font-extrabold text-white flex items-center space-x-2">
-                  <Dna size={15} strokeWidth={2.5} />
+                <label className="text-sm font-semibold text-slate-200 flex items-center space-x-2">
+                  <Dna size={16} className="text-indigo-400" />
                   <span>Amino Acid Sequence</span>
                 </label>
                 <div className="flex items-center space-x-2">
-                  <span className={`text-xs font-mono font-bold ${sequence.length > 400 ? 'text-accent-red' : 'text-white/50'}`}>
-                    {sequence.length}<span className="text-white/30">/400</span>
+                  <span className={`text-xs font-mono font-medium ${sequence.length > 400 ? 'text-red-400' : 'text-slate-400'}`}>
+                    {sequence.length}<span className="text-slate-600">/400</span>
                   </span>
                   {isValid && <div className="pulse-dot" />}
                 </div>
               </div>
               <textarea
-                className="input-glass w-full h-36 p-5 text-sm leading-relaxed resize-none"
+                className="input-glass w-full h-36 p-4 text-sm leading-relaxed resize-none"
                 value={sequence}
                 onChange={(e) => setSequence(e.target.value.toUpperCase())}
                 placeholder="Paste your amino acid sequence here (e.g. MALWMRLL...)"
               />
               {invalidChars.length > 0 && (
-                <p className="text-accent-red text-xs flex items-center space-x-2 font-bold">
-                  <span className="w-2 h-2 bg-accent-red border-2 border-white inline-block" />
+                <p className="text-red-400 text-xs flex items-center space-x-2 font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 inline-block" />
                   <span>Invalid characters: <strong className="font-mono">{invalidChars.join(', ')}</strong></span>
                 </p>
               )}
@@ -228,43 +224,42 @@ const SequenceInput = ({ onToast }) => {
 
             {/* Mutation & Gene */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="space-y-2">
-                <label className="text-xs font-extrabold text-white uppercase tracking-wider flex items-center space-x-2">
-                  <FlaskConical size={12} strokeWidth={2.5} />
-                  <span>Mutation <span className="text-white/40 normal-case">(optional)</span></span>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center space-x-2">
+                  <FlaskConical size={13} className="text-purple-400" />
+                  <span>Mutation <span className="text-slate-500 font-normal lowercase">(optional)</span></span>
                 </label>
                 <input
                   type="text"
-                  className="input-glass w-full p-3.5 text-sm"
+                  className="input-glass w-full p-3 text-sm"
                   value={mutation}
                   onChange={(e) => setMutation(e.target.value.toUpperCase())}
                   placeholder="e.g. A23K"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-xs font-extrabold text-white uppercase tracking-wider">
-                  Gene Name <span className="text-white/40 normal-case">(optional)</span>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                  Gene Name <span className="text-slate-500 font-normal lowercase">(optional)</span>
                 </label>
                 <input
                   type="text"
-                  className="input-glass w-full p-3.5 text-sm font-sans"
+                  className="input-glass w-full p-3 text-sm font-sans"
                   value={geneName}
                   onChange={(e) => setGeneName(e.target.value)}
                   placeholder="e.g. INS, TP53, BRCA1"
-                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                 />
               </div>
             </div>
 
             {/* Security note */}
-            <div className="flex items-center space-x-2.5 text-[10px] text-white font-bold bg-accent-emerald border-3 border-white shadow-neo-sm p-3.5">
-              <Lock size={12} className="text-[#0a0a0a] flex-shrink-0" strokeWidth={2.5} />
-              <span className="text-[#0a0a0a]">Your data is processed locally and via secure HTTPS connections to ESMFold and NCBI. Nothing is stored.</span>
+            <div className="flex items-center space-x-3 text-xs text-slate-300 bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+              <Lock size={14} className="text-indigo-400 flex-shrink-0" />
+              <span>Data is processed via secure API endpoints (ESMFold &amp; NCBI). No sequence data is retained.</span>
             </div>
 
             {/* Examples */}
-            <div className="space-y-3">
-              <p className="text-[10px] text-white/50 uppercase tracking-widest font-extrabold">Quick Examples</p>
+            <div className="space-y-2.5">
+              <p className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Quick Sample Proteins</p>
               <div className="flex flex-wrap gap-2">
                 {EXAMPLE_PROTEINS.map(p => (
                   <button
@@ -272,7 +267,7 @@ const SequenceInput = ({ onToast }) => {
                     onClick={() => { setSequence(p.sequence); setMutation(p.mutation); setGeneName(p.gene); }}
                     className="neo-chip"
                   >
-                    {p.name}
+                    {p.name} ({p.gene})
                   </button>
                 ))}
               </div>
@@ -282,18 +277,18 @@ const SequenceInput = ({ onToast }) => {
             <button
               disabled={loading || !isValid}
               onClick={handlePredict}
-              className="btn-primary w-full py-4 font-extrabold text-base disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center space-x-3"
+              className="btn-primary w-full py-3.5 text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
               {loading ? (
                 <>
-                  <Loader2 className="animate-spin" size={20} strokeWidth={2.5} />
+                  <Loader2 className="animate-spin" size={18} />
                   <span>{loadingMsg}</span>
                 </>
               ) : (
                 <>
-                  <ShieldCheck size={20} strokeWidth={2.5} />
-                  <span>Analyze Protein</span>
-                  <ChevronRight size={18} strokeWidth={2.5} />
+                  <ShieldCheck size={18} />
+                  <span>Analyze Protein Sequence</span>
+                  <ChevronRight size={16} />
                 </>
               )}
             </button>
@@ -302,24 +297,19 @@ const SequenceInput = ({ onToast }) => {
 
         {/* Loading Progress */}
         {loading && (
-          <div className="glass p-6 space-y-4 animate-fade-in">
+          <div className="glass p-5 space-y-3.5 animate-fade-in border border-slate-800">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-3 h-3 bg-accent-yellow border-2 border-white animate-ping" />
-                <p className="text-sm text-white font-extrabold">{loadingMsg}</p>
+                <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-ping" />
+                <p className="text-sm text-slate-200 font-medium">{loadingMsg}</p>
               </div>
-              <span className="text-xs text-white/50 font-mono font-bold">{loadingIdx + 1}/{LOADING_MESSAGES.length}</span>
+              <span className="text-xs text-slate-400 font-mono">{loadingIdx + 1}/{LOADING_MESSAGES.length}</span>
             </div>
             <div className="neo-bar-track">
               <div
-                className="h-full progress-bar transition-all duration-1000"
+                className="h-full bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full transition-all duration-700"
                 style={{ width: `${((loadingIdx + 1) / LOADING_MESSAGES.length) * 100}%` }}
               />
-            </div>
-            <div className="flex gap-1.5">
-              {LOADING_MESSAGES.map((_, i) => (
-                <div key={i} className={`flex-1 h-2 border-2 border-white transition-all duration-500 ${i <= loadingIdx ? 'bg-accent-yellow' : 'bg-[#1a1a1a]'}`} />
-              ))}
             </div>
           </div>
         )}
@@ -329,3 +319,4 @@ const SequenceInput = ({ onToast }) => {
 };
 
 export default SequenceInput;
+

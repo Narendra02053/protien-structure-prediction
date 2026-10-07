@@ -14,13 +14,13 @@ const StructureViewer = ({ pdbString, mutationPos }) => {
 
   useEffect(() => {
     if (!pdbString || !viewerRef.current) return;
-    const v = window.$3Dmol.createViewer(viewerRef.current, { backgroundColor: '#0a0a0a' });
+    const v = window.$3Dmol.createViewer(viewerRef.current, { backgroundColor: '#0b0f19' });
     v.addModel(pdbString, 'pdb');
     v.setStyle({}, { cartoon: { color: 'spectrum' } });
     if (mutationPos) {
-      v.addStyle({ resi: mutationPos }, { stick: { color: '#ff6b6b', radius: 0.5 } });
+      v.addStyle({ resi: mutationPos }, { stick: { color: '#ef4444', radius: 0.5 } });
       v.addLabel(`Mut ${mutationPos}`, {
-        backgroundColor: 'rgba(255,107,107,0.85)',
+        backgroundColor: 'rgba(239, 68, 68, 0.9)',
         fontColor: 'white',
         fontSize: 11,
         position: { resi: mutationPos }
@@ -36,7 +36,7 @@ const StructureViewer = ({ pdbString, mutationPos }) => {
   const applyStyle = (s, c) => {
     if (!viewer) return;
     viewer.setStyle({}, { [s]: { color: c } });
-    if (mutationPos) viewer.addStyle({ resi: mutationPos }, { stick: { color: '#ff6b6b', radius: 0.5 } });
+    if (mutationPos) viewer.addStyle({ resi: mutationPos }, { stick: { color: '#ef4444', radius: 0.5 } });
     viewer.render();
   };
 
@@ -65,64 +65,74 @@ const StructureViewer = ({ pdbString, mutationPos }) => {
   };
 
   return (
-    <div className="glass overflow-hidden relative group">
-      <div className="h-3 bg-accent-blue border-b-3 border-white" />
+    <div className="glass overflow-hidden relative border border-slate-800">
+      <div className="h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
 
-      <div className="flex items-center justify-between px-5 py-3 border-b-3 border-white bg-accent-cyan/10">
-        <div className="flex items-center space-x-2">
-          <Layers size={14} className="text-white" strokeWidth={2.5} />
-          <span className="text-xs font-extrabold text-white font-display">3D Structure</span>
+      {/* Control Bar Header */}
+      <div className="flex items-center justify-between px-5 py-3 border-b border-slate-800 bg-slate-900/90">
+        <div className="flex items-center space-x-2.5">
+          <Layers size={16} className="text-indigo-400" />
+          <span className="text-xs font-semibold text-slate-200">Interactive 3D Structure Viewer</span>
           {mutationPos && (
-            <span className="px-2 py-0.5 bg-accent-red border-3 border-white text-[9px] text-[#0a0a0a] font-extrabold shadow-neo-sm">
+            <span className="px-2 py-0.5 bg-red-500/10 border border-red-500/30 text-[11px] text-red-400 font-medium rounded-full">
               Mut @ {mutationPos}
             </span>
           )}
         </div>
-        <div className="flex items-center space-x-1">
-          <button onClick={toggleSpin} title={spinning ? 'Pause' : 'Spin'} className="neo-btn-icon">
-            {spinning ? <Pause size={13} strokeWidth={2.5} /> : <Play size={13} strokeWidth={2.5} />}
+        <div className="flex items-center space-x-1.5">
+          <button onClick={toggleSpin} title={spinning ? 'Pause Rotation' : 'Rotate Structure'} className="neo-btn-icon">
+            {spinning ? <Pause size={14} /> : <Play size={14} />}
           </button>
-          <button onClick={takeScreenshot} title="Screenshot" className="neo-btn-icon">
-            <Camera size={13} strokeWidth={2.5} />
+          <button onClick={takeScreenshot} title="Save High-Res PNG" className="neo-btn-icon">
+            <Camera size={14} />
           </button>
-          <button onClick={() => { viewer?.spin(false); viewer?.zoomTo(); viewer?.render(); setSpinning(false); }} title="Reset" className="neo-btn-icon">
-            <RefreshCw size={13} strokeWidth={2.5} />
+          <button onClick={() => { viewer?.spin(false); viewer?.zoomTo(); viewer?.render(); setSpinning(false); }} title="Reset Orientation" className="neo-btn-icon">
+            <RefreshCw size={14} />
           </button>
-          <button onClick={toggleFullscreen} title="Fullscreen" className="neo-btn-icon">
-            <Expand size={13} strokeWidth={2.5} />
+          <button onClick={toggleFullscreen} title="Toggle Fullscreen" className="neo-btn-icon">
+            <Expand size={14} />
           </button>
         </div>
       </div>
 
+      {/* 3D Canvas */}
       <div
         ref={viewerRef}
-        className="w-full border-b-3 border-white"
+        className="w-full border-b border-slate-800"
         style={{
-          height: '480px',
-          background: '#0a0a0a'
+          height: '460px',
+          background: '#0b0f19'
         }}
       />
 
-      <div className="flex items-center justify-between px-5 py-3 border-t-0">
-        <div className="flex gap-1 p-1 border-3 border-white bg-[#0a0a0a] shadow-neo-sm">
-          {STYLES.map(s => (
-            <button key={s} onClick={() => changeStyle(s)}
-              className={`px-3 py-1.5 text-[11px] font-extrabold capitalize transition-all border-2 ${
-                style === s ? 'bg-accent-yellow border-white text-[#0a0a0a] shadow-neo-sm' : 'border-transparent text-white/50 hover:bg-accent-cyan hover:text-[#0a0a0a]'
-              }`}>
-              {s}
-            </button>
-          ))}
+      {/* Bottom Controls */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 bg-slate-950/80">
+        <div className="flex items-center space-x-2">
+          <span className="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Representation:</span>
+          <div className="flex gap-1 p-1 rounded-lg bg-slate-900 border border-slate-800">
+            {STYLES.map(s => (
+              <button key={s} onClick={() => changeStyle(s)}
+                className={`px-3 py-1 text-xs font-medium capitalize rounded-md transition-all ${
+                  style === s ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                }`}>
+                {s}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex gap-1 p-1 border-3 border-white bg-[#0a0a0a] shadow-neo-sm">
-          {COLORS.map(c => (
-            <button key={c} onClick={() => changeColor(c)}
-              className={`px-3 py-1.5 text-[11px] font-extrabold capitalize transition-all border-2 ${
-                color === c ? 'bg-accent-violet border-white text-[#0a0a0a] shadow-neo-sm' : 'border-transparent text-white/50 hover:bg-accent-pink hover:text-[#0a0a0a]'
-              }`}>
-              {c}
-            </button>
-          ))}
+
+        <div className="flex items-center space-x-2">
+          <span className="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Coloring:</span>
+          <div className="flex gap-1 p-1 rounded-lg bg-slate-900 border border-slate-800">
+            {COLORS.map(c => (
+              <button key={c} onClick={() => changeColor(c)}
+                className={`px-3 py-1 text-xs font-medium capitalize rounded-md transition-all ${
+                  color === c ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                }`}>
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
